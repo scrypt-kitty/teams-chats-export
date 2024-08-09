@@ -15,6 +15,8 @@ implemented at my workplace.
 
 ## Instructions
 
+Working with Python 3.12.4 as of 2024-Aug-09
+
 To archive your chats:
 
 ```sh
