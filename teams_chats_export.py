@@ -104,9 +104,11 @@ async def fetch_all_for_request(getable, request_config):
             response = await getable_.get(request_configuration=request_config)
             if response:
                 results = response.json()
-                for result in results["value"]:
-                    yield result
-
+                try:
+                    for result in results["value"]:
+                        yield result
+                except Exception as e:
+                    print(f"Exception on line 112, results['value']: {e.message}")
 
 async def download_hosted_content(client, chat: Dict, msg: Dict, hosted_content_id: str, chat_dir: str):
     # it's happened in one case that a user doesn't have access to the hosted content
@@ -266,8 +268,10 @@ def render_message_body(msg: Dict, chat_dir: str, html_dir: str) -> Optional[str
         elif attachment["contentType"] == "application/vnd.microsoft.card.codesnippet":
             hosted_content_id = get_hosted_content_id(attachment)
             content = render_hosted_content(msg, hosted_content_id, chat_dir)
-            return f"<div class='hosted-content' data-attachment-id='{attachment['id']}' data-hosted-content-id='{hosted_content_id}'><pre><code>{content}</code></pre></div>"
-        else:
+            try:
+                return f"<blockquote class='message-reference' data-attachment-id='{attachment['id']}'>{ref['messageSender']['user']['displayName']}: {ref['messagePreview']}</blockquote>"
+            except Exception as e:
+                print(f"Exception on line 272, None: {e}")        else:
             return f"Attachment (raw data): {pprint.pformat(attachment)}<br/>"
 
     def get_image(match):
